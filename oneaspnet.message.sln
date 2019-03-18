@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.438
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B41A6B4C-D650-47B6-AA5A-B30DBFC1E678}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{5A84E15A-0E0F-4FF6-AA5D-D9CD5612AD06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneAspNet.Message.Kafka", "src\OneAspNet.Message.Kafka\OneAspNet.Message.Kafka.csproj", "{C71A65F0-9EC4-4003-8E6E-596846070797}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaSample", "samples\KafkaSample\KafkaSample.csproj", "{887A5E81-3C77-4D89-8A54-0B1D50AAF4AF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C71A65F0-9EC4-4003-8E6E-596846070797}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C71A65F0-9EC4-4003-8E6E-596846070797}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C71A65F0-9EC4-4003-8E6E-596846070797}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C71A65F0-9EC4-4003-8E6E-596846070797}.Release|Any CPU.Build.0 = Release|Any CPU
+		{887A5E81-3C77-4D89-8A54-0B1D50AAF4AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{887A5E81-3C77-4D89-8A54-0B1D50AAF4AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{887A5E81-3C77-4D89-8A54-0B1D50AAF4AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{887A5E81-3C77-4D89-8A54-0B1D50AAF4AF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C71A65F0-9EC4-4003-8E6E-596846070797} = {B41A6B4C-D650-47B6-AA5A-B30DBFC1E678}
+		{887A5E81-3C77-4D89-8A54-0B1D50AAF4AF} = {5A84E15A-0E0F-4FF6-AA5D-D9CD5612AD06}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5704C06E-9E48-4AF1-B778-21DED051D9B7}
+	EndGlobalSection
+EndGlobal
