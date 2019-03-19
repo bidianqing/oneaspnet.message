@@ -61,6 +61,7 @@ namespace OneAspNet.Message.Kafka
 
                 try
                 {
+                    const int commitPeriod = 50;
                     while (true)
                     {
                         try
@@ -69,6 +70,11 @@ namespace OneAspNet.Message.Kafka
 
                             var message = MessagePack.MessagePackSerializer.Deserialize<T>(cr.Value);
                             await action(message, stoppingToken);
+
+                            if (cr.Offset.Value % commitPeriod == 0)
+                            {
+                                c.Commit(cr);
+                            }
                         }
                         catch (ConsumeException e)
                         {
