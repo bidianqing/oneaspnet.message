@@ -31,6 +31,7 @@ namespace OneAspNet.Message.Kafka
         /// <summary>
         /// send a single message to kafka topic
         /// https://github.com/confluentinc/confluent-kafka-dotnet/issues/770
+        /// https://github.com/confluentinc/confluent-kafka-dotnet/issues/803
         /// </summary>
         /// <param name="message"></param>
         /// <param name="partition"></param>
