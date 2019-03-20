@@ -73,21 +73,14 @@ namespace OneAspNet.Message.Kafka
             {
                 c.Subscribe(_topic);
 
-                CancellationTokenSource cts = new CancellationTokenSource();
-                Console.CancelKeyPress += (_, e) =>
-                {
-                    e.Cancel = true; // prevent the process from terminating.
-                    cts.Cancel();
-                };
-
                 try
                 {
                     const int commitPeriod = 50;
-                    while (true)
+                    while (!stoppingToken.IsCancellationRequested)
                     {
                         try
                         {
-                            var cr = c.Consume(cts.Token);
+                            var cr = c.Consume(stoppingToken);
 
                             var message = MessagePack.MessagePackSerializer.Deserialize<T>(cr.Value);
                             await action(message, stoppingToken);
