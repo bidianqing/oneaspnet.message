@@ -10,6 +10,8 @@ namespace OneAspNet.Message.Kafka
 {
     public class KafkaService<T>
     {
+        private readonly SemaphoreSlim _connectionLock = new SemaphoreSlim(initialCount: 1, maxCount: 1);
+        private Producer<Null, byte[]> _producer;
         private readonly ILogger _logger;
         private readonly KafkaOptions _kafkaOptions;
         private readonly string _topic;
@@ -26,21 +28,27 @@ namespace OneAspNet.Message.Kafka
             _topic = GetTopicName(typeof(T));
         }
 
+        /// <summary>
+        /// send a single message to kafka topic
+        /// https://github.com/confluentinc/confluent-kafka-dotnet/issues/770
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="partition"></param>
+        /// <returns></returns>
         public async Task ProduceAsync(T message, int partition = 0)
         {
-            using (var p = new ProducerBuilder<Null, byte[]>(_kafkaOptions.ProducerConfig).Build())
+            var producer = GetProducer();
+
+            try
             {
-                try
+                var dr = await producer.ProduceAsync(new TopicPartition(_topic,new Partition(partition)), new Message<Null, byte[]>
                 {
-                    var dr = await p.ProduceAsync(_topic, new Message<Null, byte[]>
-                    {
-                        Value = MessagePack.MessagePackSerializer.Serialize(message)
-                    });
-                }
-                catch (ProduceException<Null, string> e)
-                {
-                    _logger.LogError(e, $"Delivery failed: {e.Error.Reason}");
-                }
+                    Value = MessagePack.MessagePackSerializer.Serialize(message)
+                });
+            }
+            catch (ProduceException<Null, string> e)
+            {
+                _logger.LogError(e, $"Delivery failed: {e.Error.Reason}");
             }
         }
 
@@ -110,6 +118,24 @@ namespace OneAspNet.Message.Kafka
             }
 
             return topic;
+        }
+
+        private Producer<Null, byte[]> GetProducer()
+        {
+            if (_producer == null)
+            {
+                _connectionLock.Wait();
+                try
+                {
+                    _producer = new ProducerBuilder<Null, byte[]>(_kafkaOptions.ProducerConfig).Build();
+                }
+                catch
+                {
+                    _connectionLock.Release();
+                }
+            }
+
+            return _producer;
         }
     }
 }
