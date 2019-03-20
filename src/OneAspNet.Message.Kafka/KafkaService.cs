@@ -33,16 +33,16 @@ namespace OneAspNet.Message.Kafka
         /// https://github.com/confluentinc/confluent-kafka-dotnet/issues/770
         /// https://github.com/confluentinc/confluent-kafka-dotnet/issues/803
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="partition"></param>
+        /// <param name="message">message</param>
+        /// <param name="partition">partition</param>
         /// <returns></returns>
-        public async Task ProduceAsync(T message, int partition = 0)
+        public async Task ProduceAsync(T message, int partition)
         {
             var producer = GetProducer();
 
             try
             {
-                var dr = await producer.ProduceAsync(new TopicPartition(_topic,new Partition(partition)), new Message<Null, byte[]>
+                var dr = await producer.ProduceAsync(new TopicPartition(_topic, new Partition(partition)), new Message<Null, byte[]>
                 {
                     Value = MessagePack.MessagePackSerializer.Serialize(message)
                 });
@@ -52,6 +52,32 @@ namespace OneAspNet.Message.Kafka
                 _logger.LogError(e, $"Delivery failed: {e.Error.Reason}");
             }
         }
+
+        /// <summary>
+        /// send a single message to kafka topic
+        /// https://github.com/confluentinc/confluent-kafka-dotnet/issues/770
+        /// https://github.com/confluentinc/confluent-kafka-dotnet/issues/803
+        /// </summary>
+        /// <param name="message">message</param>
+        /// <returns></returns>
+        public async Task ProduceAsync(T message)
+        {
+            var producer = GetProducer();
+
+            try
+            {
+                var dr = await producer.ProduceAsync(_topic, new Message<Null, byte[]>
+                {
+                    Value = MessagePack.MessagePackSerializer.Serialize(message)
+                });
+            }
+            catch (ProduceException<Null, string> e)
+            {
+                _logger.LogError(e, $"Delivery failed: {e.Error.Reason}");
+            }
+        }
+
+
 
         public async Task ProcessAsync(Func<T, CancellationToken, Task> action, CancellationToken stoppingToken, string groupId)
         {
