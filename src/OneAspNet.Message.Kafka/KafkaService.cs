@@ -60,22 +60,8 @@ namespace OneAspNet.Message.Kafka
         /// </summary>
         /// <param name="message">message</param>
         /// <returns></returns>
-        public async Task ProduceAsync(T message)
-        {
-            var producer = GetProducer();
-
-            try
-            {
-                var dr = await producer.ProduceAsync(_topic, new Message<Null, byte[]>
-                {
-                    Value = MessagePack.MessagePackSerializer.Serialize(message)
-                });
-            }
-            catch (ProduceException<Null, string> e)
-            {
-                _logger.LogError(e, $"Delivery failed: {e.Error.Reason}");
-            }
-        }
+        public async Task ProduceAsync(T message)=>
+            await ProduceAsync(message, Partition.Any.Value);
 
 
 
