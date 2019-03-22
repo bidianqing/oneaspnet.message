@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace OneAspNet.Message.Kafka
     public class KafkaService<T>
     {
         private readonly SemaphoreSlim _connectionLock = new SemaphoreSlim(initialCount: 1, maxCount: 1);
-        private Producer<Null, byte[]> _producer;
+        private IProducer<Null, byte[]> _producer;
         private readonly ILogger _logger;
         private readonly KafkaOptions _kafkaOptions;
         private readonly string _topic;
@@ -60,7 +61,7 @@ namespace OneAspNet.Message.Kafka
         /// </summary>
         /// <param name="message">message</param>
         /// <returns></returns>
-        public async Task ProduceAsync(T message)=>
+        public async Task ProduceAsync(T message) =>
             await ProduceAsync(message, Partition.Any.Value);
 
 
@@ -75,7 +76,9 @@ namespace OneAspNet.Message.Kafka
 
                 try
                 {
-                    const int commitPeriod = 50;
+                    int count = 0;
+                    Dictionary<int, long> partitionOffsetValues = new Dictionary<int, long>();
+
                     while (!stoppingToken.IsCancellationRequested)
                     {
                         try
@@ -85,9 +88,19 @@ namespace OneAspNet.Message.Kafka
                             var message = MessagePack.MessagePackSerializer.Deserialize<T>(cr.Value);
                             await action(message, stoppingToken);
 
-                            if (cr.Offset.Value % commitPeriod == 0)
+                            count++;
+                            partitionOffsetValues[cr.Partition.Value] = cr.Offset.Value;
+
+                            if (count >= 10)
                             {
-                                c.Commit(cr);
+                                TopicPartitionOffset[] topicPartitionOffsets = partitionOffsetValues.Select(u => new TopicPartitionOffset(
+                                    _topic,
+                                    new Partition(u.Key)
+                                    , new Offset(u.Value))).ToArray();
+
+                                c.Commit(topicPartitionOffsets);
+                                count = 0;
+                                partitionOffsetValues.Clear();
                             }
                         }
                         catch (ConsumeException e)
@@ -126,7 +139,7 @@ namespace OneAspNet.Message.Kafka
             return topic;
         }
 
-        private Producer<Null, byte[]> GetProducer()
+        private IProducer<Null, byte[]> GetProducer()
         {
             if (_producer == null)
             {

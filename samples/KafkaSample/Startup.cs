@@ -1,5 +1,4 @@
-﻿using Confluent.Kafka;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +28,7 @@ namespace KafkaSample
             {
                 options.ProducerConfig = kafkaOptions.ProducerConfig;
                 options.ConsumerConfig = kafkaOptions.ConsumerConfig;
+                options.AdminClientConfig = kafkaOptions.AdminClientConfig;
             });
 
             services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, LogConsumerBackgroundService>();

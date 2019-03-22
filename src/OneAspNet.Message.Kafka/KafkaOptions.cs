@@ -7,5 +7,7 @@ namespace OneAspNet.Message.Kafka
         public ProducerConfig ProducerConfig { get; set; }
 
         public ConsumerConfig ConsumerConfig { get; set; }
+
+        public AdminClientConfig AdminClientConfig { get; set; }
     }
 }
