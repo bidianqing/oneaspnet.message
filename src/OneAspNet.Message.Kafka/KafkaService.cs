@@ -91,7 +91,7 @@ namespace OneAspNet.Message.Kafka
                             count++;
                             partitionOffsetValues[cr.Partition.Value] = cr.Offset.Value;
 
-                            if (count >= 10)
+                            if (count >= _kafkaOptions.CustomConfig.NumOfAutoCommit && _kafkaOptions.CustomConfig.EnableNumOfAutoCommit)
                             {
                                 TopicPartitionOffset[] topicPartitionOffsets = partitionOffsetValues.Select(u => new TopicPartitionOffset(
                                     _topic,
