@@ -48,7 +48,7 @@ namespace OneAspNet.Message.Kafka
                     Value = MessagePack.MessagePackSerializer.Serialize(message)
                 });
             }
-            catch (ProduceException<Null, string> e)
+            catch (ProduceException<Null, byte[]> e)
             {
                 _logger.LogError(e, $"Delivery failed: {e.Error.Reason}");
             }
