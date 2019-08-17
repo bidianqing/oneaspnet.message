@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -77,7 +76,6 @@ namespace OneAspNet.Message.Kafka
                 try
                 {
                     int count = 0;
-                    Dictionary<int, long> partitionOffsetValues = new Dictionary<int, long>();
 
                     while (!stoppingToken.IsCancellationRequested)
                     {
@@ -87,20 +85,13 @@ namespace OneAspNet.Message.Kafka
 
                             var message = MessagePack.MessagePackSerializer.Deserialize<T>(cr.Value);
                             await action(message, stoppingToken);
-
                             count++;
-                            partitionOffsetValues[cr.Partition.Value] = cr.Offset.Value;
 
                             if (count >= _kafkaOptions.CustomConfig.NumOfAutoCommit && _kafkaOptions.CustomConfig.EnableNumOfAutoCommit)
                             {
-                                TopicPartitionOffset[] topicPartitionOffsets = partitionOffsetValues.Select(u => new TopicPartitionOffset(
-                                    _topic,
-                                    new Partition(u.Key)
-                                    , new Offset(u.Value))).ToArray();
-
-                                c.Commit(topicPartitionOffsets);
                                 count = 0;
-                                partitionOffsetValues.Clear();
+
+                                c.Commit();
                             }
                         }
                         catch (ConsumeException e)
