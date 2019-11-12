@@ -13,8 +13,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="1.2.0" />
-    <PackageReference Include="MessagePack" Version="1.7.3.7" />
+    <PackageReference Include="Confluent.Kafka" Version="1.2.1" />
+    <PackageReference Include="MessagePack" Version="1.8.74" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.0" />
