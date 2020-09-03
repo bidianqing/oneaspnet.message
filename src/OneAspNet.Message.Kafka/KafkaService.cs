@@ -36,15 +36,44 @@ namespace OneAspNet.Message.Kafka
         /// <param name="message">message</param>
         /// <param name="partition">partition</param>
         /// <returns></returns>
-        public async Task ProduceAsync(T message, int partition)
+        public async Task<DeliveryResult<Null, byte[]>> ProduceAsync(T message, int partition)
+        {
+            var producer = GetProducer();
+
+            DeliveryResult<Null, byte[]> dr = default;
+
+            try
+            {
+                dr = await producer.ProduceAsync(new TopicPartition(_topic, new Partition(partition)), new Message<Null, byte[]>
+                {
+                    Value = MessagePack.MessagePackSerializer.Serialize(message),
+                });
+            }
+            catch (ProduceException<Null, byte[]> e)
+            {
+                _logger.LogError(e, $"Delivery failed: {e.Error.Reason}");
+            }
+
+            return dr;
+        }
+
+        /// <summary>
+        /// send a single message to kafka topic
+        /// https://github.com/confluentinc/confluent-kafka-dotnet/issues/770
+        /// https://github.com/confluentinc/confluent-kafka-dotnet/issues/803
+        /// </summary>
+        /// <param name="message">message</param>
+        /// <param name="partition">partition</param>
+        /// <returns></returns>
+        public void Produce(T message, int partition)
         {
             var producer = GetProducer();
 
             try
             {
-                var dr = await producer.ProduceAsync(new TopicPartition(_topic, new Partition(partition)), new Message<Null, byte[]>
+                producer.Produce(new TopicPartition(_topic, new Partition(partition)), new Message<Null, byte[]>
                 {
-                    Value = MessagePack.MessagePackSerializer.Serialize(message)
+                    Value = MessagePack.MessagePackSerializer.Serialize(message),
                 });
             }
             catch (ProduceException<Null, byte[]> e)
@@ -60,8 +89,15 @@ namespace OneAspNet.Message.Kafka
         /// </summary>
         /// <param name="message">message</param>
         /// <returns></returns>
-        public async Task ProduceAsync(T message) =>
-            await ProduceAsync(message, Partition.Any.Value);
+        public async Task<DeliveryResult<Null, byte[]>> ProduceAsync(T message)
+        {
+            return await ProduceAsync(message, Partition.Any.Value);
+        }
+
+        public void Produce(T message)
+        {
+            Produce(message, Partition.Any.Value);
+        }
 
 
 
@@ -83,7 +119,7 @@ namespace OneAspNet.Message.Kafka
                         {
                             var cr = c.Consume(stoppingToken);
 
-                            var message = MessagePack.MessagePackSerializer.Deserialize<T>(cr.Value);
+                            var message = MessagePack.MessagePackSerializer.Deserialize<T>(cr.Message.Value);
                             await action(message, stoppingToken);
                             count++;
 

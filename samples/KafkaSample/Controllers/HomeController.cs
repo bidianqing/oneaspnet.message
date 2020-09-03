@@ -6,7 +6,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OneAspNet.Message.Kafka;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace KafkaSample.Controllers
@@ -56,18 +58,9 @@ namespace KafkaSample.Controllers
         {
             using (IAdminClient adminClient = new Confluent.Kafka.AdminClientBuilder(_kafkaOptions.AdminClientConfig).Build())
             {
-                await adminClient.CreatePartitionsAsync(new PartitionsSpecification[]
-                {
-                    new PartitionsSpecification
-                    {
-                        Topic="Log",
-                        IncreaseTo=24,
-                    },
-                    new PartitionsSpecification
-                    {
-                        Topic="Order",
-                        IncreaseTo=24,
-                    },
+                await adminClient.CreateTopicsAsync(new TopicSpecification[] {
+                    new TopicSpecification{ Name = "Log", NumPartitions = 24 },
+                    new TopicSpecification{ Name = "Order", NumPartitions = 24 },
                 });
             }
 
