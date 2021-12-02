@@ -1,7 +1,10 @@
-﻿namespace OneAspNet.Message.RabbitMQ
+﻿using RabbitMQ.Client;
+using System;
+
+namespace OneAspNet.Message.RabbitMQ
 {
     public interface IProducingService
     {
-        void Send(string clientProvidedName, string message);
+        void Send(string connectionName, string exchange, string routingKey, string message, Action<IBasicProperties> action = null);
     }
 }

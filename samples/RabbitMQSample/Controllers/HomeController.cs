@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OneAspNet.Message.RabbitMQ;
+using System.Collections.Generic;
 
 namespace RabbitMQSample.Controllers
 {
@@ -15,9 +16,13 @@ namespace RabbitMQSample.Controllers
 
         public IActionResult Index()
         {
-            for (int i = 0; i < 10000000; i++)
+            for (int i = 0; i < 10; i++)
             {
-                _producingService.Send("localhost", $"{i.ToString()}-不用摇号也可以拥有北京车牌！242辆京牌小客车参加司法处置，今起报名报名时间：12月1日10:00至12月10日15:00报名时间：12月1日10:00至12月10日15:00报名时间：12月1日10:00至12月10日15:00报名时间：12月1日10:00至12月10日15:00");
+                _producingService.Send("test", "", "queue_red", $"{i.ToString()}", (basicProperties) =>
+                {
+                    basicProperties.Headers = new Dictionary<string, object>();
+                    basicProperties.Headers.Add("name", "bidianqing");
+                });
             }
 
             return Content("发送成功");
