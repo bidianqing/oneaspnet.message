@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OneAspNet.Message.RabbitMQ;
+using OneAspNet.Message.Rabbitmq;
 using System.Collections.Generic;
 
 namespace RabbitMQSample.Controllers

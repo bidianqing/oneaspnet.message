@@ -1,6 +1,6 @@
 ﻿using RabbitMQ.Client;
 
-namespace OneAspNet.Message.RabbitMQ.Internal
+namespace OneAspNet.Message.Rabbitmq.Internal
 {
     internal class RabbitmqEntry
     {

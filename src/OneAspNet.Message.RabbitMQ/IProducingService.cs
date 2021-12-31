@@ -1,7 +1,7 @@
 ﻿using RabbitMQ.Client;
 using System;
 
-namespace OneAspNet.Message.RabbitMQ
+namespace OneAspNet.Message.Rabbitmq
 {
     public interface IProducingService
     {

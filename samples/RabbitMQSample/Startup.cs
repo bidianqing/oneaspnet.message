@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OneAspNet.Message.RabbitMQ;
 
 namespace RabbitMQSample
 {
@@ -21,7 +20,11 @@ namespace RabbitMQSample
         {
             services.AddControllers();
 
-            services.AddSingleton<IProducingService, ProducingService>();
+            //services.AddSingleton<IProducingService, ProducingService>();
+            services.AddRabbitmq(options =>
+            {
+                options.RabbitmqConnections = Configuration.GetSection("RabbitmqConnections").Get<RabbitmqConnection[]>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

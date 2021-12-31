@@ -1,8 +1,8 @@
 ﻿using RabbitMQ.Client;
 
-namespace OneAspNet.Message.RabbitMQ
+namespace Microsoft.Extensions.DependencyInjection
 {
-    public class RabbitmqEntryOptions
+    public class RabbitmqConnection
     {
         /// <summary>
         /// ConnectionName

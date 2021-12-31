@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.438
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B41A6B4C-D650-47B6-AA5A-B30DBFC1E678}"
 EndProject
@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OneAspNet.Message.Kafka", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KafkaSample", "samples\KafkaSample\KafkaSample.csproj", "{887A5E81-3C77-4D89-8A54-0B1D50AAF4AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneAspNet.Message.RabbitMQ", "src\OneAspNet.Message.RabbitMQ\OneAspNet.Message.RabbitMQ.csproj", "{4C4E64B6-106D-4162-B577-F3D0499CDA5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OneAspNet.Message.Rabbitmq", "src\OneAspNet.Message.Rabbitmq\OneAspNet.Message.Rabbitmq.csproj", "{4C4E64B6-106D-4162-B577-F3D0499CDA5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMQSample", "samples\RabbitMQSample\RabbitMQSample.csproj", "{211EE73B-9A74-498B-8BCD-E8E556952F91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RabbitMQSample", "samples\RabbitMQSample\RabbitMQSample.csproj", "{211EE73B-9A74-498B-8BCD-E8E556952F91}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

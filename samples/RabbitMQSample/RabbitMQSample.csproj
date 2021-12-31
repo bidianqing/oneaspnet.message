@@ -7,7 +7,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\OneAspNet.Message.RabbitMQ\OneAspNet.Message.RabbitMQ.csproj" />
+    <ProjectReference Include="..\..\src\OneAspNet.Message.Rabbitmq\OneAspNet.Message.Rabbitmq.csproj" />
   </ItemGroup>
 
 </Project>

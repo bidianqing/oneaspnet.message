@@ -1,21 +1,22 @@
-﻿using Microsoft.Extensions.Configuration;
-using OneAspNet.Message.RabbitMQ.Internal;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using OneAspNet.Message.Rabbitmq.Internal;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 
-namespace OneAspNet.Message.RabbitMQ
+namespace OneAspNet.Message.Rabbitmq
 {
     public class ProducingService : IProducingService
     {
         private readonly ConcurrentDictionary<string, Lazy<RabbitmqEntry>> entries = new ConcurrentDictionary<string, Lazy<RabbitmqEntry>>(StringComparer.OrdinalIgnoreCase);
-        private readonly IConfiguration _configuration;
+        private readonly RabbitmqOptions _rabbitmqOptions;
 
-        public ProducingService(IConfiguration configuration)
+        public ProducingService(IOptions<RabbitmqOptions> rabbitmqOptionsAccessor)
         {
-            _configuration = configuration;
+            _rabbitmqOptions = rabbitmqOptionsAccessor.Value;
         }
 
         public void Send(string connectionName, string exchange, string routingKey, string message, Action<IBasicProperties> action = null)
@@ -40,8 +41,7 @@ namespace OneAspNet.Message.RabbitMQ
 
         private RabbitmqEntry CreateConnection(string key)
         {
-            var entryOptions = _configuration.GetSection("RabbitmqOptions").Get<RabbitmqEntryOptions[]>();
-            var entry = entryOptions.FirstOrDefault(e => e.ConnectionName == key);
+            var entry = _rabbitmqOptions.RabbitmqConnections.FirstOrDefault(e => e.ConnectionName == key);
             if (entry == null)
             {
                 throw new ArgumentException($"无效的参数：{key}", nameof(key));
