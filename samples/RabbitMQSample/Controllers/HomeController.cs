@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OneAspNet.Message.Rabbitmq;
+using RabbitMQ.Client;
 using System.Collections.Generic;
 
 namespace RabbitMQSample.Controllers
@@ -16,9 +17,12 @@ namespace RabbitMQSample.Controllers
 
         public IActionResult Index()
         {
+            //var connection = new ConnectionFactory().CreateConnection();
+            //var model = connection.CreateModel();
+            //model.QueueDeclare();
             for (int i = 0; i < 10; i++)
             {
-                _producingService.Send("test", "", "queue_red", $"{i.ToString()}", (basicProperties) =>
+                _producingService.Send("test", "duck-direct", "red", $"{i.ToString()}", (basicProperties) =>
                 {
                     basicProperties.Headers = new Dictionary<string, object>();
                     basicProperties.Headers.Add("name", "bidianqing");

@@ -32,8 +32,9 @@ namespace KafkaSample
                 options.CustomConfig = kafkaOptions.CustomConfig;
             });
 
+            
             services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, LogConsumerBackgroundService>();
-            //services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, OrderConsumerBackgroundService>();
+            services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, OrderConsumerBackgroundService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

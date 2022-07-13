@@ -20,11 +20,12 @@ namespace RabbitMQSample
         {
             services.AddControllers();
 
-            //services.AddSingleton<IProducingService, ProducingService>();
             services.AddRabbitmq(options =>
             {
                 options.RabbitmqConnections = Configuration.GetSection("RabbitmqConnections").Get<RabbitmqConnection[]>();
             });
+
+            services.AddHostedService<DuckrConsumerBackgroundService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
