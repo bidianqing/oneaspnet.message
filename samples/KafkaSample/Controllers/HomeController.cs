@@ -6,14 +6,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OneAspNet.Message.Kafka;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace KafkaSample.Controllers
 {
-    public class HomeController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class HomeController : ControllerBase
     {
         private readonly KafkaService<Log> _logKafkaService;
         private readonly KafkaService<Order> _orderKafkaService;
@@ -25,11 +24,6 @@ namespace KafkaSample.Controllers
             _orderKafkaService = orderKafkaService;
             _logger = logger;
             _kafkaOptions = kafkaOptionsAccesstor.CurrentValue;
-        }
-
-        public IActionResult Index()
-        {
-            return View();
         }
 
         [HttpPost("publishlog")]
@@ -65,12 +59,6 @@ namespace KafkaSample.Controllers
             }
 
             return Ok();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
