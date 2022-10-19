@@ -26,7 +26,7 @@ namespace KafkaSample.Controllers
             _kafkaOptions = kafkaOptionsAccesstor.CurrentValue;
         }
 
-        [HttpPost("publishlog")]
+        [HttpGet("publishlog")]
         public async Task<IActionResult> PublishLog()
         {
             await _logKafkaService.ProduceAsync(new Log
@@ -34,10 +34,10 @@ namespace KafkaSample.Controllers
                 Id = Guid.NewGuid(),
                 Message = "Log Message"
             });
-            return Ok();
+            return Content("ok");
         }
 
-        [HttpPost("publishorder")]
+        [HttpGet("publishorder")]
         public async Task<IActionResult> PublishOrder()
         {
             await _orderKafkaService.ProduceAsync(new Order

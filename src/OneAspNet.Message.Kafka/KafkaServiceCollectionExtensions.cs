@@ -19,7 +19,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddOptions();
             services.Configure(setupAction);
-            services.Add(ServiceDescriptor.Singleton(typeof(KafkaService<>)));
+            services.AddSingleton(typeof(KafkaService<>));
 
             return services;
         }
