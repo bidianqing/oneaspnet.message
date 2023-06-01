@@ -11,7 +11,7 @@ namespace OneAspNet.Message.Rabbitmq
 {
     public class ProducingService : IProducingService
     {
-        private readonly ConcurrentDictionary<string, Lazy<RabbitmqEntry>> entries = new ConcurrentDictionary<string, Lazy<RabbitmqEntry>>(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, Lazy<RabbitmqBus>> entries = new ConcurrentDictionary<string, Lazy<RabbitmqBus>>(StringComparer.OrdinalIgnoreCase);
         private readonly RabbitmqOptions _rabbitmqOptions;
 
         public ProducingService(IOptions<RabbitmqOptions> rabbitmqOptionsAccessor)
@@ -26,22 +26,22 @@ namespace OneAspNet.Message.Rabbitmq
                 throw new ArgumentException("is null or empty", nameof(connectionName));
             }
 
-            var entry = entries.GetOrAdd(connectionName, key => new Lazy<RabbitmqEntry>(() => CreateConnection(key)));
+            var bus = entries.GetOrAdd(connectionName, key => new Lazy<RabbitmqBus>(() => CreateBus(key)));
 
             IBasicProperties basicProperties = default;
             if (action != null)
             {
-                basicProperties = entry.Value.Channel.CreateBasicProperties();
+                basicProperties = bus.Value.Channel.CreateBasicProperties();
                 action(basicProperties);
             }
 
             var body = Encoding.UTF8.GetBytes(message);
-            entry.Value.Channel.BasicPublish(exchange, routingKey, false, basicProperties, body);
+            bus.Value.Channel.BasicPublish(exchange, routingKey, false, basicProperties, body);
         }
 
-        private RabbitmqEntry CreateConnection(string key)
+        private RabbitmqBus CreateBus(string key)
         {
-            var entry = _rabbitmqOptions.RabbitmqConnections.FirstOrDefault(e => e.ConnectionName == key);
+            var entry = _rabbitmqOptions.RabbitmqConnections.FirstOrDefault(e => e.ConnectionName.Equals(key, StringComparison.OrdinalIgnoreCase));
             if (entry == null)
             {
                 throw new ArgumentException($"无效的参数：{key}", nameof(key));
@@ -50,7 +50,7 @@ namespace OneAspNet.Message.Rabbitmq
             var connection = entry.ConnectionFactory.CreateConnection();
             var channel = connection.CreateModel();
 
-            return new RabbitmqEntry
+            return new RabbitmqBus
             {
                 Connection = connection,
                 Channel = channel

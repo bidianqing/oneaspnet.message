@@ -2,7 +2,7 @@
 
 namespace OneAspNet.Message.Rabbitmq.Internal
 {
-    internal class RabbitmqEntry
+    internal class RabbitmqBus
     {
         public IConnection Connection { get; set; }
 

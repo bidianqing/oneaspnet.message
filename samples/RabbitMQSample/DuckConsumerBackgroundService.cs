@@ -32,9 +32,7 @@ namespace RabbitMQSample
                 channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             };
 
-            channel.BasicConsume(queue: "red",
-                                 autoAck: false,
-                                 consumer: consumer);
+            channel.BasicConsume(consumer, "red", false);
 
             await Task.CompletedTask;
         }
