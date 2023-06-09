@@ -1,8 +1,10 @@
-﻿using KafkaSample.Models;
+﻿using Elasticsearch.Net;
+using KafkaSample.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OneAspNet.Message.Kafka;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,9 +24,13 @@ namespace KafkaSample
         {
             await Task.Run(async () =>
             {
+                var config = new ConnectionConfiguration(new Uri("http://10.12.97.149:9200"));
+                config.BasicAuthentication("elastic", "admin_p!123");
+                var lowlevelClient = new ElasticLowLevelClient(config);
+     
                 await _kafkaService.ProcessAsync(async (message, token) =>
                 {
-                    _logger.LogWarning(JsonConvert.SerializeObject(message));
+                    var response = await lowlevelClient.IndexAsync<StringResponse>("kafka", PostData.String(message));
 
                 }, stoppingToken, "LogConsumer");
             });

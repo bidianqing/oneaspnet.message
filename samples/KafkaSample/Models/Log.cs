@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 
 namespace KafkaSample.Models
 {
-    [TopicName("uatapplog")]
+    [TopicName("logs")]
     [DataContract]
     public class Log
     {

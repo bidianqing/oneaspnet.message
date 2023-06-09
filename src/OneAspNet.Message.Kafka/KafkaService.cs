@@ -101,11 +101,11 @@ namespace OneAspNet.Message.Kafka
 
 
 
-        public async Task ProcessAsync(Func<T, CancellationToken, Task> action, CancellationToken stoppingToken, string groupId)
+        public async Task ProcessAsync(Func<string, CancellationToken, Task> action, CancellationToken stoppingToken, string groupId)
         {
             _kafkaOptions.ConsumerConfig.GroupId = groupId;
 
-            using (var c = new ConsumerBuilder<Ignore, byte[]>(_kafkaOptions.ConsumerConfig).Build())
+            using (var c = new ConsumerBuilder<Ignore, string>(_kafkaOptions.ConsumerConfig).Build())
             {
                 c.Subscribe(_topic);
 
@@ -119,8 +119,7 @@ namespace OneAspNet.Message.Kafka
                         {
                             var cr = c.Consume(stoppingToken);
 
-                            var message = MessagePack.MessagePackSerializer.Deserialize<T>(cr.Message.Value);
-                            await action(message, stoppingToken);
+                            await action(cr.Message.Value, stoppingToken);
                             count++;
 
                             if (count >= _kafkaOptions.CustomConfig.NumOfAutoCommit && _kafkaOptions.CustomConfig.EnableNumOfAutoCommit)
