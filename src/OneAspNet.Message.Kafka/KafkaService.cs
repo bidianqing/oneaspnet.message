@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -105,7 +106,7 @@ namespace OneAspNet.Message.Kafka
         {
             _kafkaOptions.ConsumerConfig.GroupId = groupId;
 
-            using (var c = new ConsumerBuilder<Ignore, string>(_kafkaOptions.ConsumerConfig).Build())
+            using (var c = new ConsumerBuilder<Ignore, byte[]>(_kafkaOptions.ConsumerConfig).Build())
             {
                 c.Subscribe(_topic);
 
@@ -119,7 +120,8 @@ namespace OneAspNet.Message.Kafka
                         {
                             var cr = c.Consume(stoppingToken);
 
-                            await action(cr.Message.Value, stoppingToken);
+                            var message = Encoding.UTF8.GetString(cr.Message.Value);
+                            await action(message, stoppingToken);
                             count++;
 
                             if (count >= _kafkaOptions.CustomConfig.NumOfAutoCommit && _kafkaOptions.CustomConfig.EnableNumOfAutoCommit)

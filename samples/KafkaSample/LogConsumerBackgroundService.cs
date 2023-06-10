@@ -24,13 +24,12 @@ namespace KafkaSample
         {
             await Task.Run(async () =>
             {
-                var config = new ConnectionConfiguration(new Uri("http://10.12.97.149:9200"));
-                config.BasicAuthentication("elastic", "admin_p!123");
-                var lowlevelClient = new ElasticLowLevelClient(config);
-     
+                var lowlevelClient = new ElasticLowLevelClient();
+
                 await _kafkaService.ProcessAsync(async (message, token) =>
                 {
-                    var response = await lowlevelClient.IndexAsync<StringResponse>("kafka", PostData.String(message));
+                    string index = $"log-{DateTime.Now.ToString("yyyy-MM-dd")}";
+                    await lowlevelClient.IndexAsync<StringResponse>(index, PostData.String(message));
 
                 }, stoppingToken, "LogConsumer");
             });
