@@ -27,7 +27,7 @@ namespace RabbitMQSample
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                _logger.LogInformation(message);
+                _logger.LogInformation($"接收消息：{message}");
 
                 channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             };
