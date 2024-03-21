@@ -1,10 +1,6 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RabbitMQSample
 {
@@ -18,16 +14,16 @@ namespace RabbitMQSample
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var connection = new ConnectionFactory().CreateConnection();
+            var connection = new ConnectionFactory() { DispatchConsumersAsync = true }.CreateConnection();
             var channel = connection.CreateModel();
-            var consumer = new EventingBasicConsumer(channel);
+            var consumer = new AsyncEventingBasicConsumer(channel);
 
             channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
-            consumer.Received += (model, ea) =>
+            consumer.Received += async (model, ea) =>
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                _logger.LogInformation($"接收消息：{message}");
+                await Console.Out.WriteLineAsync($"接收消息：{message}");
 
                 channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             };
