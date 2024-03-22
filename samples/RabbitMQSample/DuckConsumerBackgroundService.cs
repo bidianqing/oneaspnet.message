@@ -26,9 +26,14 @@ namespace RabbitMQSample
                 await Console.Out.WriteLineAsync($"接收消息：{message}");
 
                 channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+                if (message == "cancel")
+                {
+                    channel.BasicCancel(consumer.ConsumerTags[0]);
+                }
             };
 
             channel.BasicConsume(consumer, "red", false);
+
 
             await Task.CompletedTask;
         }
