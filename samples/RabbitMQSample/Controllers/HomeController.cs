@@ -18,7 +18,7 @@ namespace RabbitMQSample.Controllers
         {
             for (int i = 0; i < 10; i++)
             {
-                _producingService.Send("test", "duck-direct", "red", $"我是第{i.ToString()}只小鸭子", (basicProperties) =>
+                _producingService.Send("test", "duck-direct", "red", $"我是第{i.ToString()}只小鸭子", true, (basicProperties) =>
                 {
                     basicProperties.Headers = new Dictionary<string, object>();
                     basicProperties.Headers.Add("name", "bidianqing");

@@ -19,7 +19,8 @@ namespace OneAspNet.Message.Rabbitmq
             _rabbitmqOptions = rabbitmqOptionsAccessor.Value;
         }
 
-        public void Send(string connectionName, string exchange, string routingKey, string message, Action<IBasicProperties> action = null)
+
+        public void Send(string connectionName, string exchange, string routingKey, string message, bool mandatory = false, Action<IBasicProperties> action = null)
         {
             if (string.IsNullOrWhiteSpace(connectionName))
             {
@@ -36,7 +37,7 @@ namespace OneAspNet.Message.Rabbitmq
             }
 
             var body = Encoding.UTF8.GetBytes(message);
-            bus.Value.Channel.BasicPublish(exchange, routingKey, false, basicProperties, body);
+            bus.Value.Channel.BasicPublish(exchange, routingKey, mandatory, basicProperties, body);
         }
 
         private RabbitmqBus CreateBus(string key)
@@ -49,6 +50,11 @@ namespace OneAspNet.Message.Rabbitmq
 
             var connection = entry.ConnectionFactory.CreateConnection();
             var channel = connection.CreateModel();
+
+            if (entry.CreateModelAfter != null)
+            {
+                entry.CreateModelAfter(channel);
+            }
 
             return new RabbitmqBus
             {
